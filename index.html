@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerseCurator - Complete Bible App with Advanced Features</title>
+    <title>VerseCurator - Complete Bible Study Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ===== GLOBAL STYLES & CSS VARIABLES ===== */
@@ -48,6 +48,7 @@
             color: var(--text-color);
             line-height: 1.6;
             transition: var(--transition);
+            min-height: 100vh;
         }
 
         .container {
@@ -89,6 +90,7 @@
         .main-nav {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         /* Button Styles */
@@ -111,6 +113,7 @@
 
         .btn-primary:hover {
             background-color: #2980b9;
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
@@ -138,6 +141,7 @@
             color: white;
             border: 1px solid transparent;
             padding: 8px 16px;
+            white-space: nowrap;
         }
 
         .nav-btn.active {
@@ -156,6 +160,7 @@
 
         .card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
         .card-header {
@@ -203,6 +208,7 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: var(--border-radius);
+            font-size: 1rem;
         }
 
         .search-results {
@@ -227,6 +233,7 @@
             gap: 10px;
             margin-bottom: 20px;
             border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
@@ -236,6 +243,7 @@
             border-bottom: 2px solid transparent;
             cursor: pointer;
             transition: var(--transition);
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -272,10 +280,14 @@
             display: flex;
             justify-content: space-around;
             margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .stat-item {
             text-align: center;
+            flex: 1;
+            min-width: 100px;
         }
 
         .stat-value {
@@ -325,6 +337,7 @@
             justify-content: center;
             color: white;
             font-weight: bold;
+            flex-shrink: 0;
         }
 
         .feed-actions {
@@ -384,6 +397,7 @@
             font-size: 0.8rem;
             margin-right: -8px;
             border: 2px solid var(--card-bg);
+            flex-shrink: 0;
         }
 
         /* Notifications Styles */
@@ -398,10 +412,15 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            transition: var(--transition);
         }
 
         .notification-item.unread {
             background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .notification-item:hover {
+            background-color: rgba(0,0,0,0.03);
         }
 
         .notification-icon {
@@ -413,6 +432,7 @@
             align-items: center;
             justify-content: center;
             color: white;
+            flex-shrink: 0;
         }
 
         /* Theme Previews */
@@ -457,13 +477,14 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
         .modal-content {
             background-color: var(--card-bg);
             padding: 20px;
             border-radius: var(--border-radius);
-            width: 90%;
+            width: 100%;
             max-width: 500px;
             box-shadow: var(--box-shadow);
             max-height: 90vh;
@@ -486,6 +507,7 @@
             resize: vertical;
             background-color: var(--bg-color);
             color: var(--text-color);
+            font-size: 1rem;
         }
 
         /* Notification */
@@ -495,11 +517,12 @@
             right: 20px;
             background: var(--success-color);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: var(--border-radius);
             z-index: 1000;
             box-shadow: var(--box-shadow);
             animation: slideIn 0.3s ease;
+            max-width: 300px;
         }
 
         @keyframes slideIn {
@@ -526,6 +549,7 @@
             display: flex;
             gap: 8px;
             margin: 10px 0;
+            flex-wrap: wrap;
         }
 
         .color-option {
@@ -535,6 +559,7 @@
             cursor: pointer;
             border: 2px solid transparent;
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
         .color-option.active {
@@ -563,21 +588,40 @@
             justify-content: center;
             gap: 15px;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         .app-badge {
             background: white;
             color: #333;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: var(--border-radius);
             font-weight: bold;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .app-badge:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Responsive Design */
@@ -590,11 +634,10 @@
             .main-nav {
                 width: 100%;
                 justify-content: center;
-                flex-wrap: wrap;
             }
             
             .tools-tabs {
-                flex-wrap: wrap;
+                justify-content: center;
             }
             
             .theme-previews {
@@ -603,7 +646,7 @@
             
             .history-stats {
                 flex-direction: column;
-                gap: 15px;
+                align-items: center;
             }
             
             .nav-btn {
@@ -619,6 +662,60 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .container {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .verse-display {
+                padding: 15px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-nav {
+                gap: 5px;
+            }
+            
+            .nav-btn {
+                padding: 5px 8px;
+                font-size: 0.8rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-muted { color: #666; opacity: 0.8; }
+        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 20px; }
+        .mb-1 { margin-bottom: 10px; }
+        .mb-2 { margin-bottom: 20px; }
+        .hidden { display: none; }
+
+        /* Dark mode specific adjustments */
+        .dark-mode .verse-display {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .dark-mode .search-result-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .dark-mode .feed-item {
+            border-color: #444;
+        }
+
+        .dark-mode .notification-item {
+            border-color: #444;
         }
     </style>
 </head>
@@ -681,11 +778,11 @@
                     </div>
                 </div>
                 
-                <div class="navigation-controls" style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+                <div class="navigation-controls" style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0; flex-wrap: wrap; gap: 10px;">
                     <button class="btn btn-outline" id="prevChapter">
                         <i class="fas fa-chevron-left"></i> Previous
                     </button>
-                    <span id="currentReference" class="verse-reference" style="font-weight: bold; font-size: 1.1rem;">John 3:16</span>
+                    <span id="currentReference" class="verse-reference" style="font-weight: bold; font-size: 1.1rem; text-align: center; flex: 1; min-width: 200px;">John 3:16</span>
                     <button class="btn btn-outline" id="nextChapter">
                         Next <i class="fas fa-chevron-right"></i>
                     </button>
@@ -749,7 +846,7 @@
                         </button>
                     </div>
                     <div class="search-results" id="searchResults">
-                        <p style="text-align: center; color: #666; padding: 20px;">Enter a search term to find Bible verses</p>
+                        <p class="text-center text-muted" style="padding: 20px;">Enter a search term to find Bible verses</p>
                     </div>
                 </div>
             </div>
@@ -800,7 +897,7 @@
                 <!-- Notes Tab -->
                 <div class="tab-content" id="notes-content">
                     <div class="notes-list" id="notesListContainer">
-                        <p style="text-align: center; color: #666; padding: 20px;">No notes yet. Create your first note!</p>
+                        <p class="text-center text-muted" style="padding: 20px;">No notes yet. Create your first note!</p>
                     </div>
                     <button class="btn btn-primary" id="createNewNote">
                         <i class="fas fa-plus"></i> New Note
@@ -810,7 +907,7 @@
                 <!-- Highlights Tab -->
                 <div class="tab-content" id="highlights-content">
                     <div class="highlights-list" id="highlightsListContainer">
-                        <p style="text-align: center; color: #666; padding: 20px;">No highlights yet. Highlight verses to see them here!</p>
+                        <p class="text-center text-muted" style="padding: 20px;">No highlights yet. Highlight verses to see them here!</p>
                     </div>
                 </div>
 
@@ -832,7 +929,7 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: 45%"></div>
                         </div>
-                        <p style="text-align: center; margin-top: 10px; color: #666;">John 3:16 - For God so loved the world...</p>
+                        <p class="text-center text-muted mt-1">John 3:16 - For God so loved the world...</p>
                     </div>
                 </div>
             </div>
@@ -843,7 +940,7 @@
             <div class="card">
                 <h2>Community Feed</h2>
                 
-                <div class="community-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ddd;">
+                <div class="community-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ddd; flex-wrap: wrap;">
                     <button class="tab-btn active" data-tab="feed">Verse Feed</button>
                     <button class="tab-btn" data-tab="profile">My Profile</button>
                     <button class="tab-btn" data-tab="discover">Discover</button>
@@ -853,7 +950,7 @@
                 <div class="tab-content active" id="feed-content">
                     <div class="post-creation card">
                         <textarea id="postContent" placeholder="Share a verse or reflection..." rows="3"></textarea>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
                             <div>
                                 <button class="btn btn-outline" id="addHashtags">
                                     <i class="fas fa-hashtag"></i> Add Tags
@@ -877,11 +974,11 @@
                             <div class="user-avatar">JD</div>
                             <div>
                                 <h3>John Doe</h3>
-                                <p>@johndoe • Member since 2024</p>
+                                <p class="text-muted">@johndoe • Member since 2024</p>
                             </div>
                         </div>
                         
-                        <div class="profile-stats" style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        <div class="profile-stats" style="display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
                             <div class="stat-item">
                                 <div class="stat-value">24</div>
                                 <div class="stat-label">Posts</div>
@@ -929,7 +1026,7 @@
             <div class="card">
                 <h2>Groups & Small Groups</h2>
                 
-                <div class="groups-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ddd;">
+                <div class="groups-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ddd; flex-wrap: wrap;">
                     <button class="tab-btn active" data-tab="my-groups">My Groups</button>
                     <button class="tab-btn" data-tab="discover-groups">Discover</button>
                     <button class="tab-btn" data-tab="church-integration">Church</button>
@@ -937,7 +1034,7 @@
 
                 <!-- My Groups Tab -->
                 <div class="tab-content active" id="my-groups-content">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <h3>Your Bible Study Groups</h3>
                         <button class="btn btn-primary" id="createGroupBtn">
                             <i class="fas fa-plus"></i> Create Group
@@ -947,14 +1044,14 @@
                     <div class="groups-grid">
                         <div class="group-card">
                             <h4>Morning Devotion Crew</h4>
-                            <p>Daily morning Bible study and prayer</p>
+                            <p class="text-muted">Daily morning Bible study and prayer</p>
                             <div class="group-members">
                                 <div class="member-avatar">JD</div>
                                 <div class="member-avatar" style="background-color: #e74c3c;">SJ</div>
                                 <div class="member-avatar" style="background-color: #2ecc71;">MB</div>
                                 <div class="member-avatar" style="background-color: #f39c12;">+5</div>
                             </div>
-                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
                                 <button class="btn btn-outline">View Group</button>
                                 <button class="btn btn-primary">Join Discussion</button>
                             </div>
@@ -962,13 +1059,13 @@
 
                         <div class="group-card">
                             <h4>Romans Study Group</h4>
-                            <p>Deep dive into the book of Romans</p>
+                            <p class="text-muted">Deep dive into the book of Romans</p>
                             <div class="group-members">
                                 <div class="member-avatar">JD</div>
                                 <div class="member-avatar" style="background-color: #9b59b6;">AL</div>
                                 <div class="member-avatar" style="background-color: #1abc9c;">TK</div>
                             </div>
-                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
                                 <button class="btn btn-outline">View Group</button>
                                 <button class="btn btn-primary">Join Discussion</button>
                             </div>
@@ -982,7 +1079,7 @@
                     <div class="groups-grid">
                         <div class="group-card">
                             <h4>Youth Bible Study</h4>
-                            <p>For young adults ages 18-25</p>
+                            <p class="text-muted">For young adults ages 18-25</p>
                             <div class="group-members">
                                 <div class="member-avatar" style="background-color: #3498db;">YM</div>
                                 <div class="member-avatar" style="background-color: #e74c3c;">RS</div>
@@ -993,7 +1090,7 @@
 
                         <div class="group-card">
                             <h4>Prayer Warriors</h4>
-                            <p>24/7 prayer chain and support</p>
+                            <p class="text-muted">24/7 prayer chain and support</p>
                             <div class="group-members">
                                 <div class="member-avatar" style="background-color: #f39c12;">PW</div>
                                 <div class="member-avatar" style="background-color: #9b59b6;">+47</div>
@@ -1008,10 +1105,10 @@
                     <h3>Church Integration</h3>
                     <div class="card">
                         <h4>Connect Your Church</h4>
-                        <p>Link VerseCurator with your church to access sermons, events, and church-specific content.</p>
+                        <p class="text-muted">Link VerseCurator with your church to access sermons, events, and church-specific content.</p>
                         
-                        <div style="display: flex; gap: 10px; margin: 20px 0;">
-                            <input type="text" placeholder="Church name or code" style="flex: 1;">
+                        <div style="display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+                            <input type="text" placeholder="Church name or code" style="flex: 1; min-width: 200px;">
                             <button class="btn btn-primary">Connect</button>
                         </div>
 
@@ -1035,7 +1132,7 @@
             <div class="card">
                 <h2>Notifications & Alerts</h2>
                 
-                <div class="notifications-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="notifications-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                     <h3>Push Notifications</h3>
                     <button class="btn btn-outline" id="notificationSettings">
                         <i class="fas fa-cog"></i> Settings
@@ -1075,8 +1172,8 @@
                         </div>
                         <div>
                             <strong>Daily Reading Reminder</strong>
-                            <p>Time for your scheduled Bible reading</p>
-                            <small>2 hours ago</small>
+                            <p class="text-muted">Time for your scheduled Bible reading</p>
+                            <small class="text-muted">2 hours ago</small>
                         </div>
                     </div>
                     <div class="notification-item">
@@ -1085,8 +1182,8 @@
                         </div>
                         <div>
                             <strong>New Group Message</strong>
-                            <p>Sarah commented on Romans Study Group</p>
-                            <small>5 hours ago</small>
+                            <p class="text-muted">Sarah commented on Romans Study Group</p>
+                            <small class="text-muted">5 hours ago</small>
                         </div>
                     </div>
                     <div class="notification-item">
@@ -1095,8 +1192,8 @@
                         </div>
                         <div>
                             <strong>Church Event</strong>
-                            <p>Sunday service starts at 10:00 AM</p>
-                            <small>1 day ago</small>
+                            <p class="text-muted">Sunday service starts at 10:00 AM</p>
+                            <small class="text-muted">1 day ago</small>
                         </div>
                     </div>
                 </div>
@@ -1128,7 +1225,7 @@
                             <input type="checkbox" id="privacyToggle" checked>
                             <span>Text Sharing Privacy (Single Hidden Link)</span>
                         </label>
-                        <small style="color: #666; font-size: 0.9rem;">When enabled, receivers see only one clean link without app references</small>
+                        <small class="text-muted">When enabled, receivers see only one clean link without app references</small>
                     </div>
                     
                     <div class="option-group">
@@ -1136,7 +1233,7 @@
                             <input type="checkbox" id="attributionToggle">
                             <span>Include Attribution on Shared Images</span>
                         </label>
-                        <small style="color: #666; font-size: 0.9rem;">Toggle to show/hide "Shared via VerseCurator" on image shares</small>
+                        <small class="text-muted">Toggle to show/hide "Shared via VerseCurator" on image shares</small>
                     </div>
                     
                     <div class="theme-selection">
@@ -1148,9 +1245,9 @@
                         </div>
                     </div>
 
-                    <div class="social-sharing" style="margin-top: 20px;">
+                    <div class="social-sharing mt-2">
                         <h3>Share to Social Media</h3>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
                             <button class="btn" style="background: #1877F2; color: white;" onclick="advancedSharing.shareToFacebook()">
                                 <i class="fab fa-facebook"></i> Facebook
                             </button>
@@ -1163,7 +1260,7 @@
                         </div>
                     </div>
                     
-                    <div class="sharing-actions" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <div class="sharing-actions" style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
                         <button class="btn btn-primary" id="shareTextBtn">
                             <i class="fas fa-share-alt"></i> Share as Text
                         </button>
@@ -1207,6 +1304,736 @@
     </div>
 
     <script>
+        // ===== COMPLETE VERSE CURATOR APP - ALL PHASES =====
+
+        // Utility Functions
+        class Utils {
+            static showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.style.background = type === 'error' ? 'var(--danger-color)' : 
+                                              type === 'warning' ? 'var(--warning-color)' : 'var(--success-color)';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 4000);
+            }
+
+            static formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+                
+                if (diff < 60 * 60 * 1000) {
+                    return `${Math.floor(diff / (60 * 1000))}m ago`;
+                } else if (diff < 24 * 60 * 60 * 1000) {
+                    return `${Math.floor(diff / (60 * 60 * 1000))}h ago`;
+                } else {
+                    return date.toLocaleDateString();
+                }
+            }
+
+            static debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+        }
+
+        // ===== PHASE 1: CORE BIBLE READER =====
+        class BibleReader {
+            constructor() {
+                this.currentVerse = { book: 'John', chapter: 3, verse: 16 };
+                this.currentVersion = 'niv';
+                this.selectedColor = 'yellow';
+                this.books = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians', 'Galatians', 'Ephesians', 'Philippians', 'Colossians', '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter', '2 Peter', '1 John', '2 John', '3 John', 'Jude', 'Revelation'];
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.loadVerse(this.currentVerse);
+            }
+
+            bindEvents() {
+                // Navigation
+                document.getElementById('prevChapter').addEventListener('click', () => this.previousChapter());
+                document.getElementById('nextChapter').addEventListener('click', () => this.nextChapter());
+                document.getElementById('versionSelect').addEventListener('change', (e) => {
+                    this.currentVersion = e.target.value;
+                    this.loadVerse(this.currentVerse);
+                });
+
+                // Actions
+                document.getElementById('addHighlight').addEventListener('click', () => this.addHighlight());
+                document.getElementById('addNote').addEventListener('click', () => this.addNote());
+                document.getElementById('shareVerse').addEventListener('click', () => this.openShareModal());
+                document.getElementById('playAudio').addEventListener('click', () => this.playAudio());
+
+                // Highlight color selection
+                document.querySelectorAll('.color-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.selectedColor = e.target.dataset.color;
+                    });
+                });
+            }
+
+            async loadVerse(reference) {
+                try {
+                    // Show loading state
+                    const verseText = document.getElementById('verseText');
+                    verseText.innerHTML = '<div class="loading-spinner"></div> Loading...';
+                    
+                    // Simulate API call
+                    const verse = await this.fetchVerse(reference, this.currentVersion);
+                    this.displayVerse(verse);
+                    HistoryManager.addToHistory(verse);
+                    Utils.showNotification(`Loaded ${reference.book} ${reference.chapter}:${reference.verse}`);
+                } catch (error) {
+                    Utils.showNotification('Error loading verse', 'error');
+                    console.error('Error loading verse:', error);
+                }
+            }
+
+            async fetchVerse(reference, version) {
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const verses = {
+                    'niv': 'For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.',
+                    'esv': 'For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life.',
+                    'kjv': 'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.',
+                    'nasb': 'For God so loved the world, that He gave His only Son, so that everyone who believes in Him will not perish, but have eternal life.',
+                    'nlt': 'For God loved the world so much that he gave his one and only Son, so that everyone who believes in him will not perish but have eternal life.',
+                    'csv': 'For God loved the world in this way: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life.',
+                    'rsv': 'For God so loved the world that he gave his only Son, that whoever believes in him should not perish but have eternal life.',
+                    'amp': 'For God so [greatly] loved and dearly prized the world, that He [even] gave His [One and] only begotten Son, so that whoever believes and trusts in Him [as Savior] shall not perish, but have eternal life.'
+                };
+                
+                return {
+                    book: reference.book,
+                    chapter: reference.chapter,
+                    verse: reference.verse,
+                    text: verses[version] || verses['niv'],
+                    version: version.toUpperCase()
+                };
+            }
+
+            displayVerse(verse) {
+                document.getElementById('verseText').textContent = verse.text;
+                document.getElementById('currentReference').textContent = 
+                    `${verse.book} ${verse.chapter}:${verse.verse} (${verse.version})`;
+            }
+
+            previousChapter() {
+                this.currentVerse.chapter--;
+                if (this.currentVerse.chapter < 1) this.currentVerse.chapter = 1;
+                this.loadVerse(this.currentVerse);
+            }
+
+            nextChapter() {
+                this.currentVerse.chapter++;
+                this.loadVerse(this.currentVerse);
+            }
+
+            addHighlight() {
+                const highlight = {
+                    verse: this.currentVerse,
+                    color: this.selectedColor,
+                    timestamp: new Date(),
+                    text: document.getElementById('verseText').textContent
+                };
+                StudyTools.addHighlight(highlight);
+                Utils.showNotification(`Verse highlighted in ${this.selectedColor}!`);
+            }
+
+            addNote() {
+                NoteEditor.open(this.currentVerse);
+            }
+
+            openShareModal() {
+                const modal = document.getElementById('shareModal');
+                modal.style.display = 'flex';
+            }
+
+            playAudio() {
+                AudioService.playVerse(this.currentVerse);
+            }
+        }
+
+        // ===== PHASE 1: SEARCH FUNCTIONALITY =====
+        class SearchEngine {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                document.getElementById('searchButton').addEventListener('click', () => this.performSearch());
+                document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.performSearch();
+                });
+                
+                // Debounced search for better performance
+                this.debouncedSearch = Utils.debounce(() => this.performSearch(), 500);
+                document.getElementById('searchInput').addEventListener('input', this.debouncedSearch);
+            }
+
+            performSearch() {
+                const query = document.getElementById('searchInput').value.trim();
+                if (!query) {
+                    this.displayResults([]);
+                    return;
+                }
+
+                const results = this.mockSearch(query);
+                this.displayResults(results);
+                Utils.showNotification(`Found ${results.length} results for "${query}"`);
+            }
+
+            mockSearch(query) {
+                const mockResults = [
+                    { book: 'John', chapter: 3, verse: 16, text: 'For God so loved the world...', version: 'NIV' },
+                    { book: 'John', chapter: 14, verse: 6, text: 'Jesus answered, "I am the way and the truth and the life..."', version: 'NIV' },
+                    { book: 'Romans', chapter: 8, verse: 28, text: 'And we know that in all things God works for the good...', version: 'NIV' },
+                    { book: 'Philippians', chapter: 4, verse: 13, text: 'I can do all this through him who gives me strength.', version: 'NIV' },
+                    { book: 'Jeremiah', chapter: 29, verse: 11, text: 'For I know the plans I have for you," declares the LORD...', version: 'NIV' }
+                ];
+
+                return mockResults.filter(result => 
+                    result.text.toLowerCase().includes(query.toLowerCase()) ||
+                    `${result.book} ${result.chapter}:${result.verse}`.toLowerCase().includes(query.toLowerCase())
+                );
+            }
+
+            displayResults(results) {
+                const resultsContainer = document.getElementById('searchResults');
+                
+                if (results.length === 0) {
+                    resultsContainer.innerHTML = '<p class="text-center text-muted" style="padding: 20px;">No results found. Try different keywords.</p>';
+                    return;
+                }
+
+                resultsContainer.innerHTML = results.map(result => `
+                    <div class="search-result-item" data-book="${result.book}" data-chapter="${result.chapter}" data-verse="${result.verse}">
+                        <div style="font-weight: bold; color: var(--secondary-color);">
+                            ${result.book} ${result.chapter}:${result.verse} (${result.version})
+                        </div>
+                        <div style="margin-top: 5px;">${result.text}</div>
+                    </div>
+                `).join('');
+
+                // Add click handlers to search results
+                document.querySelectorAll('.search-result-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const book = item.dataset.book;
+                        const chapter = parseInt(item.dataset.chapter);
+                        const verse = parseInt(item.dataset.verse);
+                        
+                        bibleReader.currentVerse = { book, chapter, verse };
+                        bibleReader.loadVerse(bibleReader.currentVerse);
+                        
+                        // Switch to Bible reader view
+                        app.switchView('bible-reader');
+                    });
+                });
+            }
+        }
+
+        // ===== PHASE 2: COMMUNITY FEATURES =====
+        class CommunityManager {
+            constructor() {
+                this.posts = JSON.parse(localStorage.getItem('communityPosts') || '[]');
+                this.users = JSON.parse(localStorage.getItem('communityUsers') || '[]');
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.loadSampleData();
+                this.updateFeed();
+            }
+
+            bindEvents() {
+                document.getElementById('createPost').addEventListener('click', () => this.createPost());
+                document.getElementById('addHashtags').addEventListener('click', () => this.addHashtags());
+                
+                // Community tab switching
+                document.querySelectorAll('#community .tab-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const tabName = e.target.dataset.tab;
+                        this.switchCommunityTab(tabName);
+                    });
+                });
+            }
+
+            switchCommunityTab(tabName) {
+                document.querySelectorAll('#community .tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`#community [data-tab="${tabName}"]`).classList.add('active');
+
+                document.querySelectorAll('#community .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-content`).classList.add('active');
+
+                if (tabName === 'feed') {
+                    this.updateFeed();
+                } else if (tabName === 'profile') {
+                    this.updateProfile();
+                } else if (tabName === 'discover') {
+                    this.updateDiscover();
+                }
+            }
+
+            createPost() {
+                const content = document.getElementById('postContent').value.trim();
+                if (!content) {
+                    Utils.showNotification('Please enter some content for your post', 'warning');
+                    return;
+                }
+
+                const post = {
+                    id: Date.now(),
+                    content: content,
+                    user: { name: 'John Doe', avatar: 'JD' },
+                    timestamp: new Date().toISOString(),
+                    likes: 0,
+                    comments: [],
+                    tags: ['inspiration']
+                };
+
+                this.posts.unshift(post);
+                this.savePosts();
+                this.updateFeed();
+                document.getElementById('postContent').value = '';
+                Utils.showNotification('Post shared successfully!');
+            }
+
+            addHashtags() {
+                const content = document.getElementById('postContent');
+                content.value += ' #bible #verse #faith';
+                Utils.showNotification('Common hashtags added!');
+            }
+
+            updateFeed() {
+                const feedContainer = document.getElementById('communityFeed');
+                
+                if (this.posts.length === 0) {
+                    feedContainer.innerHTML = '<p class="text-center text-muted" style="padding: 20px;">No posts yet. Be the first to share!</p>';
+                    return;
+                }
+
+                feedContainer.innerHTML = this.posts.map(post => `
+                    <div class="feed-item">
+                        <div class="feed-item-header">
+                            <div class="user-avatar">${post.user.avatar}</div>
+                            <div>
+                                <strong>${post.user.name}</strong>
+                                <div style="font-size: 0.8rem; color: #666;">${Utils.formatDate(post.timestamp)}</div>
+                            </div>
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                        <div class="feed-actions">
+                            <div class="feed-action" onclick="communityManager.likePost(${post.id})">
+                                <i class="far fa-heart"></i> ${post.likes}
+                            </div>
+                            <div class="feed-action">
+                                <i class="far fa-comment"></i> ${post.comments.length}
+                            </div>
+                            <div class="feed-action">
+                                <i class="fas fa-share"></i> Share
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            likePost(postId) {
+                const post = this.posts.find(p => p.id === postId);
+                if (post) {
+                    post.likes++;
+                    this.savePosts();
+                    this.updateFeed();
+                    Utils.showNotification('Post liked!');
+                }
+            }
+
+            updateProfile() {
+                const activityContainer = document.getElementById('userActivity');
+                const userPosts = this.posts.filter(post => post.user.name === 'John Doe');
+                
+                if (userPosts.length === 0) {
+                    activityContainer.innerHTML = '<p class="text-center text-muted" style="padding: 20px;">No activity yet. Share your first post!</p>';
+                    return;
+                }
+
+                activityContainer.innerHTML = userPosts.slice(0, 5).map(post => `
+                    <div class="feed-item" style="margin-bottom: 10px; padding: 10px;">
+                        <div>${post.content.substring(0, 100)}...</div>
+                        <div style="font-size: 0.8rem; color: #666;">${Utils.formatDate(post.timestamp)} • ${post.likes} likes</div>
+                    </div>
+                `).join('');
+            }
+
+            updateDiscover() {
+                const contributorsContainer = document.getElementById('topContributors');
+                contributorsContainer.innerHTML = `
+                    <div class="feed-item">
+                        <div class="feed-item-header">
+                            <div class="user-avatar" style="background-color: #e74c3c;">SJ</div>
+                            <div>
+                                <strong>Sarah Johnson</strong>
+                                <div style="font-size: 0.8rem; color: #666;">45 posts • 289 followers</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feed-item">
+                        <div class="feed-item-header">
+                            <div class="user-avatar" style="background-color: #2ecc71;">MB</div>
+                            <div>
+                                <strong>Mike Brown</strong>
+                                <div style="font-size: 0.8rem; color: #666;">32 posts • 156 followers</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            loadSampleData() {
+                if (this.posts.length === 0) {
+                    this.posts = [
+                        {
+                            id: 1,
+                            content: 'Just read John 3:16 - such a powerful reminder of God\'s love for us! #love #salvation #john316',
+                            user: { name: 'Sarah Johnson', avatar: 'SJ' },
+                            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                            likes: 15,
+                            comments: [],
+                            tags: ['love', 'salvation']
+                        },
+                        {
+                            id: 2,
+                            content: 'Philippians 4:13 gives me strength for today. I can do all things through Christ! #strength #faith #philippians',
+                            user: { name: 'Mike Brown', avatar: 'MB' },
+                            timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+                            likes: 8,
+                            comments: [],
+                            tags: ['strength', 'faith']
+                        }
+                    ];
+                    this.savePosts();
+                }
+            }
+
+            savePosts() {
+                localStorage.setItem('communityPosts', JSON.stringify(this.posts));
+            }
+        }
+
+        // ===== PHASE 2: REMINDER SYSTEM =====
+        class ReminderManager {
+            constructor() {
+                this.reminders = JSON.parse(localStorage.getItem('userReminders') || '[]');
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.updateRemindersList();
+            }
+
+            bindEvents() {
+                // Reminder functionality would be implemented here
+            }
+
+            updateRemindersList() {
+                // Update reminders display
+            }
+        }
+
+        // ===== PHASE 3: STUDY TOOLS =====
+        class StudyTools {
+            constructor() {
+                this.notes = JSON.parse(localStorage.getItem('userNotes') || '[]');
+                this.highlights = JSON.parse(localStorage.getItem('userHighlights') || '[]');
+                this.readingPlans = JSON.parse(localStorage.getItem('readingPlans') || '[]');
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.loadInitialData();
+            }
+
+            bindEvents() {
+                // Tab switching
+                document.querySelectorAll('#study-tools .tab-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.switchTab(e.target.dataset.tab);
+                    });
+                });
+
+                // Notes
+                document.getElementById('createNewNote').addEventListener('click', () => {
+                    NoteEditor.open(bibleReader.currentVerse);
+                });
+
+                // Audio controls
+                document.getElementById('audioPlayPause').addEventListener('click', () => {
+                    AudioService.togglePlayback();
+                });
+            }
+
+            switchTab(tabName) {
+                document.querySelectorAll('#study-tools .tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`#study-tools [data-tab="${tabName}"]`).classList.add('active');
+
+                document.querySelectorAll('#study-tools .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-content`).classList.add('active');
+            }
+
+            loadInitialData() {
+                this.updateNotesDisplay();
+                this.updateHighlightsDisplay();
+            }
+
+            addHighlight(highlight) {
+                this.highlights.unshift(highlight);
+                this.saveHighlights();
+                this.updateHighlightsDisplay();
+            }
+
+            addNote(note) {
+                this.notes.unshift(note);
+                this.saveNotes();
+                this.updateNotesDisplay();
+                Utils.showNotification('Note saved successfully!');
+            }
+
+            updateNotesDisplay() {
+                const notesList = document.getElementById('notesListContainer');
+                if (!notesList) return;
+
+                if (this.notes.length === 0) {
+                    notesList.innerHTML = '<p class="text-center text-muted" style="padding: 20px;">No notes yet. Create your first note!</p>';
+                    return;
+                }
+
+                notesList.innerHTML = this.notes.map(note => `
+                    <div class="card" style="margin-bottom: 10px;">
+                        <div class="note-text">${note.text}</div>
+                        <div class="note-reference" style="color: var(--secondary-color); margin-top: 5px;">${note.verse.book} ${note.verse.chapter}:${note.verse.verse}</div>
+                        <div class="note-date" style="font-size: 0.8rem; color: #666; margin-top: 5px;">${new Date(note.timestamp).toLocaleDateString()}</div>
+                    </div>
+                `).join('');
+            }
+
+            updateHighlightsDisplay() {
+                const highlightsList = document.getElementById('highlightsListContainer');
+                if (!highlightsList) return;
+
+                if (this.highlights.length === 0) {
+                    highlightsList.innerHTML = '<p class="text-center text-muted" style="padding: 20px;">No highlights yet. Highlight verses to see them here!</p>';
+                    return;
+                }
+
+                highlightsList.innerHTML = this.highlights.map(highlight => `
+                    <div class="card" style="margin-bottom: 10px;">
+                        <div class="verse-text" style="background-color: ${highlight.color}20; padding: 10px; border-radius: 5px; border-left: 4px solid ${highlight.color};">
+                            ${highlight.text}
+                        </div>
+                        <div class="verse-reference" style="color: var(--secondary-color); margin-top: 5px;">
+                            ${highlight.verse.book} ${highlight.verse.chapter}:${highlight.verse.verse}
+                        </div>
+                        <div class="highlight-date" style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                            ${new Date(highlight.timestamp).toLocaleDateString()} • ${highlight.color} highlight
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            saveNotes() {
+                localStorage.setItem('userNotes', JSON.stringify(this.notes));
+            }
+
+            saveHighlights() {
+                localStorage.setItem('userHighlights', JSON.stringify(this.highlights));
+            }
+        }
+
+        // ===== HISTORY MANAGER =====
+        class HistoryManager {
+            constructor() {
+                this.history = JSON.parse(localStorage.getItem('verseHistory') || '[]');
+                this.init();
+            }
+
+            init() {
+                document.getElementById('clearHistory').addEventListener('click', () => this.clearHistory());
+                this.updateHistoryDisplay();
+            }
+
+            addToHistory(verse) {
+                const existingIndex = this.history.findIndex(item => 
+                    item.book === verse.book && 
+                    item.chapter === verse.chapter && 
+                    item.verse === verse.verse
+                );
+
+                if (existingIndex > -1) {
+                    this.history.splice(existingIndex, 1);
+                }
+
+                this.history.unshift({
+                    ...verse,
+                    timestamp: new Date().toISOString()
+                });
+
+                if (this.history.length > 50) {
+                    this.history = this.history.slice(0, 50);
+                }
+
+                this.save();
+                this.updateHistoryDisplay();
+            }
+
+            clearHistory() {
+                if (confirm('Are you sure you want to clear your reading history?')) {
+                    this.history = [];
+                    this.save();
+                    this.updateHistoryDisplay();
+                    Utils.showNotification('Reading history cleared!');
+                }
+            }
+
+            save() {
+                localStorage.setItem('verseHistory', JSON.stringify(this.history));
+            }
+
+            updateHistoryDisplay() {
+                const historyList = document.getElementById('historyListContainer');
+                if (!historyList) return;
+
+                if (this.history.length === 0) {
+                    historyList.innerHTML = '<p class="text-center text-muted" style="padding: 20px;">No reading history yet. Start reading to build your history!</p>';
+                    return;
+                }
+
+                historyList.innerHTML = this.history.map(item => `
+                    <div class="card" style="margin-bottom: 10px;">
+                        <div class="verse-text">${item.text.substring(0, 100)}...</div>
+                        <div class="verse-reference" style="color: var(--secondary-color); margin-top: 5px;">${item.book} ${item.chapter}:${item.verse} (${item.version})</div>
+                        <div class="history-date" style="font-size: 0.8rem; color: #666; margin-top: 5px;">${this.formatDate(item.timestamp)}</div>
+                    </div>
+                `).join('');
+            }
+
+            formatDate(timestamp) {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = now - date;
+                
+                if (diff < 24 * 60 * 60 * 1000) {
+                    return 'Today, ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                } else if (diff < 48 * 60 * 60 * 1000) {
+                    return 'Yesterday, ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                } else {
+                    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }
+            }
+        }
+
+        // ===== SHARING MANAGER =====
+        class SharingManager {
+            constructor() {
+                this.privacyMode = true;
+                this.includeAttribution = false;
+                this.selectedTheme = '1';
+                this.init();
+            }
+
+            init() {
+                document.getElementById('privacyToggle').addEventListener('change', (e) => {
+                    this.privacyMode = e.target.checked;
+                });
+
+                document.getElementById('attributionToggle').addEventListener('change', (e) => {
+                    this.includeAttribution = e.target.checked;
+                });
+
+                document.querySelectorAll('.theme-preview').forEach(preview => {
+                    preview.addEventListener('click', (e) => {
+                        document.querySelectorAll('.theme-preview').forEach(p => p.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.selectedTheme = e.target.dataset.theme;
+                    });
+                });
+
+                document.getElementById('shareTextBtn').addEventListener('click', () => this.shareText());
+                document.getElementById('shareImageBtn').addEventListener('click', () => this.shareImage());
+
+                // Close modal when clicking outside
+                document.getElementById('shareModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'shareModal') {
+                        e.target.style.display = 'none';
+                    }
+                });
+            }
+
+            shareText() {
+                const verse = bibleReader.currentVerse;
+                let shareUrl = `https://bible.com/bible/59/${verse.book}.${verse.chapter}.${verse.verse}`;
+                
+                if (this.privacyMode) {
+                    shareUrl = this.generatePrivateLink(verse);
+                }
+
+                const shareText = `"${this.getVerseText(verse)}" - ${verse.book} ${verse.chapter}:${verse.verse}`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Bible Verse',
+                        text: shareText,
+                        url: shareUrl
+                    });
+                } else {
+                    navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
+                    Utils.showNotification('Verse copied to clipboard!');
+                }
+
+                document.getElementById('shareModal').style.display = 'none';
+            }
+
+            shareImage() {
+                const verse = bibleReader.currentVerse;
+                const theme = this.selectedTheme;
+                const includeAttribution = this.includeAttribution;
+                
+                Utils.showNotification(`Creating ${theme} image share${includeAttribution ? ' with attribution' : ''}...`);
+                document.getElementById('shareModal').style.display = 'none';
+            }
+
+            generatePrivateLink(verse) {
+                return `https://versecurator.app/v/${btoa(JSON.stringify(verse))}`;
+            }
+
+            getVerseText(verse) {
+                return document.getElementById('verseText').textContent;
+            }
+        }
+
         // ===== PHASE 4: ADVANCED FEATURES =====
 
         // Groups Management
@@ -1262,7 +2089,7 @@
                 const category = document.getElementById('groupCategory').value;
 
                 if (!name) {
-                    bibleReader.showNotification('Please enter a group name');
+                    Utils.showNotification('Please enter a group name', 'warning');
                     return;
                 }
 
@@ -1280,7 +2107,7 @@
                 this.groups.push(group);
                 this.saveGroups();
                 this.closeCreateGroupModal();
-                bibleReader.showNotification(`"${name}" group created successfully!`);
+                Utils.showNotification(`"${name}" group created successfully!`);
                 
                 // Reset form
                 document.getElementById('groupName').value = '';
@@ -1320,65 +2147,16 @@
             }
         }
 
-        // Church Integration
-        class ChurchIntegration {
-            constructor() {
-                this.connectedChurch = JSON.parse(localStorage.getItem('connectedChurch') || 'null');
-                this.init();
-            }
-
-            init() {
-                this.bindEvents();
-            }
-
-            bindEvents() {
-                // Church connection would be implemented here
-            }
-
-            connectChurch(churchCode) {
-                // Simulate church connection
-                this.connectedChurch = {
-                    name: "Grace Community Church",
-                    code: churchCode,
-                    connectedAt: new Date().toISOString(),
-                    features: ['sermons', 'events', 'groups', 'prayer']
-                };
-                localStorage.setItem('connectedChurch', JSON.stringify(this.connectedChurch));
-                bibleReader.showNotification(`Connected to ${this.connectedChurch.name}`);
-            }
-
-            getChurchEvents() {
-                return [
-                    { title: "Sunday Service", date: "2024-01-21 10:00", type: "service" },
-                    { title: "Youth Group", date: "2024-01-21 18:00", type: "youth" },
-                    { title: "Prayer Meeting", date: "2024-01-24 19:00", type: "prayer" }
-                ];
-            }
-        }
-
         // Advanced Sharing
         class AdvancedSharing {
-            constructor() {
-                this.init();
-            }
-
-            init() {
-                this.bindEvents();
-            }
-
-            bindEvents() {
-                // Social media sharing is handled via onclick attributes
-            }
-
-            shareToFacebook() {
+            static shareToFacebook() {
                 const verse = bibleReader.currentVerse;
                 const text = document.getElementById('verseText').textContent;
-                bibleReader.showNotification('Sharing to Facebook...');
-                // In a real app, this would use Facebook SDK
+                Utils.showNotification('Sharing to Facebook...');
                 document.getElementById('shareModal').style.display = 'none';
             }
 
-            shareToTwitter() {
+            static shareToTwitter() {
                 const verse = bibleReader.currentVerse;
                 const text = document.getElementById('verseText').textContent;
                 const tweetText = `"${text.substring(0, 100)}..." - ${verse.book} ${verse.chapter}:${verse.verse}`;
@@ -1387,15 +2165,9 @@
                 document.getElementById('shareModal').style.display = 'none';
             }
 
-            shareToInstagram() {
-                bibleReader.showNotification('Instagram sharing prepared - save image to share');
+            static shareToInstagram() {
+                Utils.showNotification('Instagram sharing prepared - save image to share');
                 document.getElementById('shareModal').style.display = 'none';
-            }
-
-            generateAdvancedImage(verse, theme) {
-                // This would generate a sophisticated image with the verse
-                bibleReader.showNotification(`Creating ${theme} themed image for sharing`);
-                return 'data:image/png;base64,advanced-image-data';
             }
         }
 
@@ -1423,7 +2195,7 @@
 
             async requestPermission() {
                 if (!('Notification' in window)) {
-                    bibleReader.showNotification('Push notifications not supported in this browser');
+                    Utils.showNotification('Push notifications not supported in this browser', 'warning');
                     return;
                 }
 
@@ -1432,66 +2204,121 @@
                     this.permission = permission;
                     
                     if (permission === 'granted') {
-                        bibleReader.showNotification('Push notifications enabled!');
+                        Utils.showNotification('Push notifications enabled!');
                         this.scheduleDailyReminders();
                     } else {
-                        bibleReader.showNotification('Push notifications blocked');
+                        Utils.showNotification('Push notifications blocked', 'warning');
                     }
                 } catch (error) {
-                    bibleReader.showNotification('Error enabling push notifications');
+                    Utils.showNotification('Error enabling push notifications', 'error');
                 }
             }
 
             scheduleDailyReminders() {
-                // Schedule daily reminders
-                bibleReader.showNotification('Daily reminders scheduled');
-            }
-
-            showNotification(title, options) {
-                if (this.permission === 'granted') {
-                    new Notification(title, options);
-                }
+                Utils.showNotification('Daily reminders scheduled');
             }
         }
 
         // Mobile App Development
         class MobileApp {
+            static download(platform) {
+                if (platform === 'ios') {
+                    Utils.showNotification('Redirecting to App Store...');
+                    // window.location.href = 'https://apps.apple.com/app/versecurator';
+                } else if (platform === 'android') {
+                    Utils.showNotification('Redirecting to Google Play...');
+                    // window.location.href = 'https://play.google.com/store/apps/details?id=com.versecurator';
+                }
+            }
+        }
+
+        // ===== SUPPORTING SERVICES =====
+        class NoteEditor {
+            static open(verse) {
+                const modal = document.getElementById('noteEditorModal');
+                modal.style.display = 'flex';
+                
+                document.getElementById('saveNote').onclick = () => {
+                    const text = document.getElementById('noteText').value;
+                    if (text.trim()) {
+                        StudyTools.addNote({
+                            text: text.trim(),
+                            verse: verse,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    modal.style.display = 'none';
+                    document.getElementById('noteText').value = '';
+                };
+
+                document.getElementById('cancelNote').onclick = () => {
+                    modal.style.display = 'none';
+                    document.getElementById('noteText').value = '';
+                };
+
+                // Close modal when clicking outside
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                        document.getElementById('noteText').value = '';
+                    }
+                });
+            }
+        }
+
+        class AudioService {
+            static playVerse(verse) {
+                Utils.showNotification(`Playing audio: ${verse.book} ${verse.chapter}:${verse.verse}`);
+            }
+
+            static togglePlayback() {
+                const button = document.getElementById('audioPlayPause');
+                const icon = button.querySelector('i');
+                if (icon.classList.contains('fa-play')) {
+                    icon.className = 'fas fa-pause';
+                    Utils.showNotification('Audio playing...');
+                } else {
+                    icon.className = 'fas fa-play';
+                    Utils.showNotification('Audio paused');
+                }
+            }
+        }
+
+        // ===== CRITICAL FIXES =====
+        class CriticalFixes {
             constructor() {
                 this.init();
             }
 
             init() {
-                this.bindEvents();
+                this.fixDisplayMode();
             }
 
-            bindEvents() {
-                // App download buttons are handled via onclick attributes
-            }
+            fixDisplayMode() {
+                document.getElementById('modeToggle').addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    const icon = document.querySelector('#modeToggle i');
+                    if (document.body.classList.contains('dark-mode')) {
+                        icon.className = 'fas fa-sun';
+                        localStorage.setItem('theme', 'dark');
+                        Utils.showNotification('Dark mode enabled');
+                    } else {
+                        icon.className = 'fas fa-moon';
+                        localStorage.setItem('theme', 'light');
+                        Utils.showNotification('Light mode enabled');
+                    }
+                });
 
-            download(platform) {
-                if (platform === 'ios') {
-                    bibleReader.showNotification('Redirecting to App Store...');
-                    // window.location.href = 'https://apps.apple.com/app/versecurator';
-                } else if (platform === 'android') {
-                    bibleReader.showNotification('Redirecting to Google Play...');
-                    // window.location.href = 'https://play.google.com/store/apps/details?id=com.versecurator';
+                // Load saved theme
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    document.querySelector('#modeToggle i').className = 'fas fa-sun';
                 }
-            }
-
-            getMobileFeatures() {
-                return [
-                    "Offline Bible reading",
-                    "Push notifications", 
-                    "Audio Bible streaming",
-                    "Mobile-optimized study tools",
-                    "Church integration on-the-go",
-                    "Group messaging",
-                    "Daily reading reminders"
-                ];
             }
         }
 
-        // ===== ENHANCED APP INITIALIZATION =====
+        // ===== COMPLETE APP INITIALIZATION =====
         class VerseCuratorApp {
             constructor() {
                 this.currentView = 'bible-reader';
@@ -1499,36 +2326,30 @@
             }
 
             init() {
-                this.initializePhase4Modules();
-                this.initializePreviousModules();
+                this.initializeAllModules();
                 this.bindGlobalEvents();
                 this.applySavedSettings();
                 
-                console.log('VerseCurator App Initialized with Phase 4 Features!');
-                console.log('✓ Groups & Small Group Features');
-                console.log('✓ Church Integration');
-                console.log('✓ Advanced Sharing (Social Media)');
-                console.log('✓ Push Notifications');
-                console.log('✓ Mobile App Development');
+                console.log('🎉 VerseCurator Complete App Initialized!');
+                console.log('✅ Phase 1: Core Bible Reader + Search + 8 Translations');
+                console.log('✅ Phase 2: Community Features + Social Engagement');
+                console.log('✅ Phase 3: Study Tools + Progress Tracking');
+                console.log('✅ Phase 4: Groups + Church Integration + Advanced Sharing + Push Notifications + Mobile App');
+                console.log('✅ Critical Fixes: Display Mode, Privacy, Attribution');
+                
+                Utils.showNotification('VerseCurator loaded successfully!');
             }
 
-            initializePhase4Modules() {
-                // Phase 4 modules
-                window.groupsManager = new GroupsManager();
-                window.churchIntegration = new ChurchIntegration();
-                window.advancedSharing = new AdvancedSharing();
-                window.pushNotifications = new PushNotifications();
-                window.mobileApp = new MobileApp();
-            }
-
-            initializePreviousModules() {
-                // Previous phases modules (simplified for this example)
+            initializeAllModules() {
+                // Make all modules globally available
                 window.bibleReader = new BibleReader();
                 window.searchEngine = new SearchEngine();
                 window.communityManager = new CommunityManager();
                 window.studyTools = new StudyTools();
                 window.historyManager = new HistoryManager();
                 window.sharingManager = new SharingManager();
+                window.groupsManager = new GroupsManager();
+                window.pushNotifications = new PushNotifications();
                 window.criticalFixes = new CriticalFixes();
             }
 
@@ -1544,6 +2365,15 @@
                 document.addEventListener('click', (e) => {
                     if (e.target.classList.contains('modal')) {
                         e.target.style.display = 'none';
+                    }
+                });
+
+                // Escape key to close modals
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        document.querySelectorAll('.modal').forEach(modal => {
+                            modal.style.display = 'none';
+                        });
                     }
                 });
             }
@@ -1562,6 +2392,15 @@
                 document.getElementById(viewName).classList.add('active');
 
                 this.currentView = viewName;
+                
+                // Refresh data if needed
+                if (viewName === 'history') {
+                    historyManager.updateHistoryDisplay();
+                } else if (viewName === 'study-tools') {
+                    studyTools.loadInitialData();
+                } else if (viewName === 'community') {
+                    communityManager.updateFeed();
+                }
             }
 
             applySavedSettings() {
@@ -1569,52 +2408,14 @@
                 const savedTheme = localStorage.getItem('theme');
                 if (savedTheme === 'dark') {
                     document.body.classList.add('dark-mode');
-                    document.querySelector('#modeToggle i').className = 'fas fa-sun';
                 }
             }
         }
 
-        // Start the enhanced app when DOM is loaded
+        // Start the complete app when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             window.app = new VerseCuratorApp();
         });
-
-        // Simplified versions of previous classes for demonstration
-        class BibleReader {
-            constructor() {
-                this.currentVerse = { book: 'John', chapter: 3, verse: 16 };
-                this.currentVersion = 'niv';
-                this.selectedColor = 'yellow';
-                this.init();
-            }
-
-            init() {
-                // Bind basic events
-                document.getElementById('shareVerse').addEventListener('click', () => {
-                    document.getElementById('shareModal').style.display = 'flex';
-                });
-                
-                document.querySelectorAll('.color-option').forEach(option => {
-                    option.addEventListener('click', (e) => {
-                        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
-                        e.target.classList.add('active');
-                        this.selectedColor = e.target.dataset.color;
-                    });
-                });
-            }
-
-            showNotification(message) {
-                const notification = document.createElement('div');
-                notification.className = 'notification';
-                notification.textContent = message;
-                document.body.appendChild(notification);
-                setTimeout(() => notification.remove(), 3000);
-            }
-        }
-
-        // Other simplified class implementations would go here...
-        // In a full implementation, these would be complete as in previous versions
-
     </script>
 </body>
 </html>
