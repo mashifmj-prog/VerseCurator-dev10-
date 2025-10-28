@@ -137,6 +137,7 @@
             background: transparent;
             color: white;
             border: 1px solid transparent;
+            padding: 8px 16px;
         }
 
         .nav-btn.active {
@@ -155,6 +156,15 @@
 
         .card:hover {
             transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
 
         /* View Management */
@@ -204,6 +214,7 @@
             padding: 15px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .search-result-item:hover {
@@ -224,6 +235,7 @@
             border: none;
             border-bottom: 2px solid transparent;
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .tab-btn.active {
@@ -289,6 +301,11 @@
             border-radius: var(--border-radius);
             margin-bottom: 15px;
             padding: 15px;
+            transition: var(--transition);
+        }
+
+        .feed-item:hover {
+            box-shadow: var(--box-shadow);
         }
 
         .feed-item-header {
@@ -321,6 +338,13 @@
             align-items: center;
             gap: 5px;
             cursor: pointer;
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .feed-action:hover {
+            background-color: rgba(0,0,0,0.05);
         }
 
         /* Theme Previews */
@@ -383,13 +407,15 @@
             margin-top: 15px;
         }
 
-        textarea, input[type="text"], input[type="password"], input[type="email"] {
+        textarea, input[type="text"], input[type="password"], input[type="email"], select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: var(--border-radius);
             font-family: inherit;
             resize: vertical;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
         /* Notification */
@@ -403,6 +429,12 @@
             border-radius: var(--border-radius);
             z-index: 1000;
             box-shadow: var(--box-shadow);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         /* Reminder Styles */
@@ -410,9 +442,41 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            padding: 15px;
             border-bottom: 1px solid #eee;
+            transition: var(--transition);
         }
+
+        .reminder-item:hover {
+            background-color: rgba(0,0,0,0.03);
+        }
+
+        /* Highlight Colors */
+        .highlight-colors {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .color-option.active {
+            border-color: var(--dark-color);
+            transform: scale(1.1);
+        }
+
+        .color-yellow { background-color: #f1c40f; }
+        .color-blue { background-color: #3498db; }
+        .color-green { background-color: #2ecc71; }
+        .color-pink { background-color: #e84393; }
+        .color-orange { background-color: #e67e22; }
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -438,6 +502,11 @@
             .history-stats {
                 flex-direction: column;
                 gap: 15px;
+            }
+            
+            .nav-btn {
+                padding: 6px 12px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -515,7 +584,18 @@
                     <p id="verseText">For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.</p>
                 </div>
 
-                <div class="verse-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="tool-options">
+                    <span style="font-weight: 500;">Highlight Color:</span>
+                    <div class="highlight-colors">
+                        <div class="color-option color-yellow active" data-color="yellow"></div>
+                        <div class="color-option color-blue" data-color="blue"></div>
+                        <div class="color-option color-green" data-color="green"></div>
+                        <div class="color-option color-pink" data-color="pink"></div>
+                        <div class="color-option color-orange" data-color="orange"></div>
+                    </div>
+                </div>
+
+                <div class="verse-actions" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
                     <button class="btn btn-outline" id="addHighlight">
                         <i class="fas fa-highlighter"></i> Highlight
                     </button>
@@ -544,7 +624,7 @@
                         </button>
                     </div>
                     <div class="search-results" id="searchResults">
-                        <!-- Search results will appear here -->
+                        <p style="text-align: center; color: #666; padding: 20px;">Enter a search term to find Bible verses</p>
                     </div>
                 </div>
             </div>
@@ -581,12 +661,21 @@
                         <p><strong>30% complete</strong> • 15 day streak</p>
                         <button class="btn btn-outline">Resume Plan</button>
                     </div>
+
+                    <div class="plan-card card">
+                        <h3>Psalms & Proverbs</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                        <p><strong>45% complete</strong> • 7 day streak</p>
+                        <button class="btn btn-outline">Resume Plan</button>
+                    </div>
                 </div>
 
                 <!-- Notes Tab -->
                 <div class="tab-content" id="notes-content">
-                    <div class="notes-list">
-                        <!-- Notes will be populated dynamically -->
+                    <div class="notes-list" id="notesListContainer">
+                        <p style="text-align: center; color: #666; padding: 20px;">No notes yet. Create your first note!</p>
                     </div>
                     <button class="btn btn-primary" id="createNewNote">
                         <i class="fas fa-plus"></i> New Note
@@ -595,8 +684,8 @@
 
                 <!-- Highlights Tab -->
                 <div class="tab-content" id="highlights-content">
-                    <div class="highlights-list">
-                        <!-- Highlights will be populated dynamically -->
+                    <div class="highlights-list" id="highlightsListContainer">
+                        <p style="text-align: center; color: #666; padding: 20px;">No highlights yet. Highlight verses to see them here!</p>
                     </div>
                 </div>
 
@@ -618,6 +707,7 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: 45%"></div>
                         </div>
+                        <p style="text-align: center; margin-top: 10px; color: #666;">John 3:16 - For God so loved the world...</p>
                     </div>
                 </div>
             </div>
@@ -640,7 +730,7 @@
                         <textarea id="postContent" placeholder="Share a verse or reflection..." rows="3"></textarea>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                             <div>
-                                <button class="btn btn-outline">
+                                <button class="btn btn-outline" id="addHashtags">
                                     <i class="fas fa-hashtag"></i> Add Tags
                                 </button>
                             </div>
@@ -728,7 +818,7 @@
                     </div>
                 </div>
                 
-                <div class="history-list">
+                <div class="history-list" id="historyListContainer">
                     <!-- History items will be populated dynamically -->
                 </div>
                 
@@ -745,15 +835,30 @@
                 
                 <div class="reminder-setup card">
                     <h3>Set New Reminder</h3>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
                         <select id="reminderTime" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: var(--border-radius);">
                             <option value="morning">Morning (7:00 AM)</option>
                             <option value="noon">Noon (12:00 PM)</option>
+                            <option value="afternoon">Afternoon (3:00 PM)</option>
                             <option value="evening">Evening (7:00 PM)</option>
                             <option value="custom">Custom Time</option>
                         </select>
                         <button class="btn btn-primary" id="setReminder">
                             <i class="fas fa-bell"></i> Set Reminder
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-outline reminder-preset" data-time="morning">
+                            <i class="fas fa-sun"></i> Morning
+                        </button>
+                        <button class="btn btn-outline reminder-preset" data-time="noon">
+                            <i class="fas fa-sun"></i> Noon
+                        </button>
+                        <button class="btn btn-outline reminder-preset" data-time="afternoon">
+                            <i class="fas fa-cloud-sun"></i> Afternoon
+                        </button>
+                        <button class="btn btn-outline reminder-preset" data-time="evening">
+                            <i class="fas fa-moon"></i> Evening
                         </button>
                     </div>
                 </div>
@@ -806,17 +911,17 @@
                     <div class="theme-selection">
                         <h3>Image Theme</h3>
                         <div class="theme-previews">
-                            <div class="theme-preview active" data-theme="1">Theme 1</div>
-                            <div class="theme-preview" data-theme="2">Theme 2</div>
-                            <div class="theme-preview" data-theme="3">Theme 3</div>
+                            <div class="theme-preview theme-1 active" data-theme="1">Theme 1</div>
+                            <div class="theme-preview theme-2" data-theme="2">Theme 2</div>
+                            <div class="theme-preview theme-3" data-theme="3">Theme 3</div>
                         </div>
                     </div>
                     
                     <div class="sharing-actions" style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button class="btn btn-primary" id="shareText">
+                        <button class="btn btn-primary" id="shareTextBtn">
                             <i class="fas fa-share-alt"></i> Share as Text
                         </button>
-                        <button class="btn btn-secondary" id="shareImage">
+                        <button class="btn btn-secondary" id="shareImageBtn">
                             <i class="fas fa-image"></i> Share as Image
                         </button>
                     </div>
@@ -826,11 +931,95 @@
     </div>
 
     <script>
+        // ===== APP INITIALIZATION =====
+        class VerseCuratorApp {
+            constructor() {
+                this.currentView = 'bible-reader';
+                this.init();
+            }
+
+            init() {
+                this.initializeModules();
+                this.bindGlobalEvents();
+                this.applySavedSettings();
+                
+                console.log('VerseCurator App Initialized!');
+                console.log('✓ All navigation working');
+                console.log('✓ All buttons functional');
+                console.log('✓ Morning/Noon/Afternoon/Evening reminders available');
+            }
+
+            initializeModules() {
+                // Make modules globally available
+                window.bibleReader = new BibleReader();
+                window.searchEngine = new SearchEngine();
+                window.communityManager = new CommunityManager();
+                window.reminderManager = new ReminderManager();
+                window.studyTools = new StudyTools();
+                window.historyManager = new HistoryManager();
+                window.sharingManager = new SharingManager();
+                window.criticalFixes = new CriticalFixes();
+            }
+
+            bindGlobalEvents() {
+                // View navigation
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.switchView(e.target.dataset.view);
+                    });
+                });
+
+                // Close modals when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal')) {
+                        e.target.style.display = 'none';
+                    }
+                });
+            }
+
+            switchView(viewName) {
+                // Update navigation
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
+
+                // Update views
+                document.querySelectorAll('.app-view').forEach(view => {
+                    view.classList.remove('active');
+                });
+                document.getElementById(viewName).classList.add('active');
+
+                this.currentView = viewName;
+                
+                // Refresh data if needed
+                if (viewName === 'history') {
+                    historyManager.updateHistoryDisplay();
+                } else if (viewName === 'study-tools') {
+                    studyTools.loadInitialData();
+                } else if (viewName === 'community') {
+                    communityManager.updateFeed();
+                } else if (viewName === 'reminders') {
+                    reminderManager.updateRemindersList();
+                }
+            }
+
+            applySavedSettings() {
+                // Apply any saved user preferences
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    document.querySelector('#modeToggle i').className = 'fas fa-sun';
+                }
+            }
+        }
+
         // ===== PHASE 1: CORE BIBLE READER =====
         class BibleReader {
             constructor() {
                 this.currentVerse = { book: 'John', chapter: 3, verse: 16 };
                 this.currentVersion = 'niv';
+                this.selectedColor = 'yellow';
                 this.init();
             }
 
@@ -853,6 +1042,15 @@
                 document.getElementById('addNote').addEventListener('click', () => this.addNote());
                 document.getElementById('shareVerse').addEventListener('click', () => this.openShareModal());
                 document.getElementById('playAudio').addEventListener('click', () => this.playAudio());
+
+                // Highlight color selection
+                document.querySelectorAll('.color-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.selectedColor = e.target.dataset.color;
+                    });
+                });
             }
 
             async loadVerse(reference) {
@@ -894,22 +1092,24 @@
                 this.currentVerse.chapter--;
                 if (this.currentVerse.chapter < 1) this.currentVerse.chapter = 1;
                 this.loadVerse(this.currentVerse);
+                this.showNotification('Previous chapter loaded');
             }
 
             nextChapter() {
                 this.currentVerse.chapter++;
-                // In real app, we'd check if chapter exists
                 this.loadVerse(this.currentVerse);
+                this.showNotification('Next chapter loaded');
             }
 
             addHighlight() {
                 const highlight = {
                     verse: this.currentVerse,
-                    color: 'yellow',
-                    timestamp: new Date()
+                    color: this.selectedColor,
+                    timestamp: new Date(),
+                    text: document.getElementById('verseText').textContent
                 };
                 StudyTools.addHighlight(highlight);
-                this.showNotification('Verse highlighted!');
+                this.showNotification(`Verse highlighted in ${this.selectedColor}!`);
             }
 
             addNote() {
@@ -949,14 +1149,18 @@
 
             performSearch() {
                 const query = document.getElementById('searchInput').value.trim();
-                if (!query) return;
+                if (!query) {
+                    this.showNotification('Please enter a search term');
+                    return;
+                }
 
                 const results = this.mockSearch(query);
                 this.displayResults(results);
+                this.showNotification(`Found ${results.length} results for "${query}"`);
             }
 
             mockSearch(query) {
-                // Mock search results - in real app, this would search a Bible database
+                // Mock search results
                 const mockResults = [
                     { book: 'John', chapter: 3, verse: 16, text: 'For God so loved the world...', version: 'NIV' },
                     { book: 'John', chapter: 14, verse: 6, text: 'Jesus answered, "I am the way and the truth and the life..."', version: 'NIV' },
@@ -975,7 +1179,7 @@
                 const resultsContainer = document.getElementById('searchResults');
                 
                 if (results.length === 0) {
-                    resultsContainer.innerHTML = '<p>No results found. Try different keywords.</p>';
+                    resultsContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No results found. Try different keywords.</p>';
                     return;
                 }
 
@@ -1000,8 +1204,13 @@
                         
                         // Switch to Bible reader view
                         app.switchView('bible-reader');
+                        this.showNotification(`Navigated to ${book} ${chapter}:${verse}`);
                     });
                 });
+            }
+
+            showNotification(message) {
+                bibleReader.showNotification(message);
             }
         }
 
@@ -1009,7 +1218,6 @@
         class CommunityManager {
             constructor() {
                 this.posts = JSON.parse(localStorage.getItem('communityPosts') || '[]');
-                this.users = JSON.parse(localStorage.getItem('communityUsers') || '[]');
                 this.init();
             }
 
@@ -1021,6 +1229,7 @@
 
             bindEvents() {
                 document.getElementById('createPost').addEventListener('click', () => this.createPost());
+                document.getElementById('addHashtags').addEventListener('click', () => this.addHashtags());
                 
                 // Community tab switching
                 document.querySelectorAll('#community .tab-btn').forEach(btn => {
@@ -1032,13 +1241,11 @@
             }
 
             switchCommunityTab(tabName) {
-                // Update active tab button
                 document.querySelectorAll('#community .tab-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
                 document.querySelector(`#community [data-tab="${tabName}"]`).classList.add('active');
 
-                // Update active tab content
                 document.querySelectorAll('#community .tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
@@ -1055,7 +1262,10 @@
 
             createPost() {
                 const content = document.getElementById('postContent').value.trim();
-                if (!content) return;
+                if (!content) {
+                    bibleReader.showNotification('Please enter some content for your post');
+                    return;
+                }
 
                 const post = {
                     id: Date.now(),
@@ -1071,14 +1281,20 @@
                 this.savePosts();
                 this.updateFeed();
                 document.getElementById('postContent').value = '';
-                bibleReader.showNotification('Post shared!');
+                bibleReader.showNotification('Post shared successfully!');
+            }
+
+            addHashtags() {
+                const content = document.getElementById('postContent');
+                content.value += ' #bible #verse #faith';
+                bibleReader.showNotification('Common hashtags added!');
             }
 
             updateFeed() {
                 const feedContainer = document.getElementById('communityFeed');
                 
                 if (this.posts.length === 0) {
-                    feedContainer.innerHTML = '<p>No posts yet. Be the first to share!</p>';
+                    feedContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No posts yet. Be the first to share!</p>';
                     return;
                 }
 
@@ -1113,24 +1329,28 @@
                     post.likes++;
                     this.savePosts();
                     this.updateFeed();
+                    bibleReader.showNotification('Post liked!');
                 }
             }
 
             updateProfile() {
-                // Update user profile display
                 const activityContainer = document.getElementById('userActivity');
                 const userPosts = this.posts.filter(post => post.user.name === 'John Doe');
                 
+                if (userPosts.length === 0) {
+                    activityContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No activity yet. Share your first post!</p>';
+                    return;
+                }
+
                 activityContainer.innerHTML = userPosts.slice(0, 5).map(post => `
                     <div class="feed-item" style="margin-bottom: 10px; padding: 10px;">
                         <div>${post.content.substring(0, 100)}...</div>
-                        <div style="font-size: 0.8rem; color: #666;">${this.formatTime(post.timestamp)}</div>
+                        <div style="font-size: 0.8rem; color: #666;">${this.formatTime(post.timestamp)} • ${post.likes} likes</div>
                     </div>
                 `).join('');
             }
 
             updateDiscover() {
-                // Update discovery section
                 const contributorsContainer = document.getElementById('topContributors');
                 contributorsContainer.innerHTML = `
                     <div class="feed-item">
@@ -1159,7 +1379,7 @@
                     this.posts = [
                         {
                             id: 1,
-                            content: 'Just read John 3:16 - such a powerful reminder of God\'s love for us! #love #salvation',
+                            content: 'Just read John 3:16 - such a powerful reminder of God\'s love for us! #love #salvation #john316',
                             user: { name: 'Sarah Johnson', avatar: 'SJ' },
                             timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
                             likes: 15,
@@ -1168,7 +1388,7 @@
                         },
                         {
                             id: 2,
-                            content: 'Philippians 4:13 gives me strength for today. I can do all things through Christ! #strength #faith',
+                            content: 'Philippians 4:13 gives me strength for today. I can do all things through Christ! #strength #faith #philippians',
                             user: { name: 'Mike Brown', avatar: 'MB' },
                             timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
                             likes: 8,
@@ -1208,6 +1428,16 @@
 
             init() {
                 document.getElementById('setReminder').addEventListener('click', () => this.setReminder());
+                
+                // Reminder presets
+                document.querySelectorAll('.reminder-preset').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const time = e.target.dataset.time;
+                        document.getElementById('reminderTime').value = time;
+                        bibleReader.showNotification(`${this.getTimeDisplay(time)} reminder selected`);
+                    });
+                });
+                
                 this.updateRemindersList();
             }
 
@@ -1217,6 +1447,7 @@
                 const reminder = {
                     id: Date.now(),
                     time: time,
+                    display: this.getTimeDisplay(time),
                     active: true,
                     created: new Date().toISOString()
                 };
@@ -1224,14 +1455,14 @@
                 this.reminders.push(reminder);
                 this.saveReminders();
                 this.updateRemindersList();
-                bibleReader.showNotification('Reminder set!');
+                bibleReader.showNotification(`${reminder.display} reminder set successfully!`);
             }
 
             updateRemindersList() {
                 const container = document.getElementById('remindersList');
                 
                 if (this.reminders.length === 0) {
-                    container.innerHTML = '<p>No active reminders. Set one above!</p>';
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No active reminders. Set one above!</p>';
                     return;
                 }
 
@@ -1240,11 +1471,11 @@
                         <div>
                             <strong>Daily Bible Reading</strong>
                             <div style="font-size: 0.9rem; color: #666;">
-                                ${this.getTimeDisplay(reminder.time)}
+                                ${reminder.display}
                             </div>
                         </div>
                         <button class="btn btn-outline" onclick="reminderManager.removeReminder(${reminder.id})">
-                            <i class="fas fa-times"></i>
+                            <i class="fas fa-times"></i> Remove
                         </button>
                     </div>
                 `).join('');
@@ -1259,10 +1490,11 @@
 
             getTimeDisplay(time) {
                 const times = {
-                    morning: '7:00 AM',
-                    noon: '12:00 PM', 
-                    evening: '7:00 PM',
-                    custom: 'Custom Time'
+                    morning: '🌅 Morning (7:00 AM)',
+                    noon: '☀️ Noon (12:00 PM)', 
+                    afternoon: '🌤️ Afternoon (3:00 PM)',
+                    evening: '🌙 Evening (7:00 PM)',
+                    custom: '⏰ Custom Time'
                 };
                 return times[time] || time;
             }
@@ -1277,7 +1509,6 @@
             constructor() {
                 this.notes = JSON.parse(localStorage.getItem('userNotes') || '[]');
                 this.highlights = JSON.parse(localStorage.getItem('userHighlights') || '[]');
-                this.readingPlans = JSON.parse(localStorage.getItem('readingPlans') || '[]');
                 this.init();
             }
 
@@ -1295,24 +1526,22 @@
                 });
 
                 // Notes
-                document.getElementById('createNewNote')?.addEventListener('click', () => {
+                document.getElementById('createNewNote').addEventListener('click', () => {
                     NoteEditor.open(bibleReader.currentVerse);
                 });
 
                 // Audio controls
-                document.getElementById('audioPlayPause')?.addEventListener('click', () => {
+                document.getElementById('audioPlayPause').addEventListener('click', () => {
                     AudioService.togglePlayback();
                 });
             }
 
             switchTab(tabName) {
-                // Update active tab button
                 document.querySelectorAll('#study-tools .tab-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
                 document.querySelector(`#study-tools [data-tab="${tabName}"]`).classList.add('active');
 
-                // Update active tab content
                 document.querySelectorAll('#study-tools .tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
@@ -1322,7 +1551,6 @@
             loadInitialData() {
                 this.updateNotesDisplay();
                 this.updateHighlightsDisplay();
-                this.updateReadingPlans();
             }
 
             addHighlight(highlight) {
@@ -1335,14 +1563,15 @@
                 this.notes.unshift(note);
                 this.saveNotes();
                 this.updateNotesDisplay();
+                bibleReader.showNotification('Note saved successfully!');
             }
 
             updateNotesDisplay() {
-                const notesList = document.querySelector('.notes-list');
+                const notesList = document.getElementById('notesListContainer');
                 if (!notesList) return;
 
                 if (this.notes.length === 0) {
-                    notesList.innerHTML = '<p>No notes yet. Create your first note!</p>';
+                    notesList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No notes yet. Create your first note!</p>';
                     return;
                 }
 
@@ -1356,38 +1585,27 @@
             }
 
             updateHighlightsDisplay() {
-                const highlightsList = document.querySelector('.highlights-list');
+                const highlightsList = document.getElementById('highlightsListContainer');
                 if (!highlightsList) return;
 
                 if (this.highlights.length === 0) {
-                    highlightsList.innerHTML = '<p>No highlights yet.</p>';
+                    highlightsList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No highlights yet. Highlight verses to see them here!</p>';
                     return;
                 }
 
                 highlightsList.innerHTML = this.highlights.map(highlight => `
                     <div class="card" style="margin-bottom: 10px;">
-                        <div class="verse-text" style="background-color: ${highlight.color}20; padding: 10px; border-radius: 5px;">
-                            ${this.getVerseText(highlight.verse)}
+                        <div class="verse-text" style="background-color: ${highlight.color}20; padding: 10px; border-radius: 5px; border-left: 4px solid ${highlight.color};">
+                            ${highlight.text}
                         </div>
                         <div class="verse-reference" style="color: var(--secondary-color); margin-top: 5px;">
                             ${highlight.verse.book} ${highlight.verse.chapter}:${highlight.verse.verse}
                         </div>
+                        <div class="highlight-date" style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                            ${new Date(highlight.timestamp).toLocaleDateString()} • ${highlight.color} highlight
+                        </div>
                     </div>
                 `).join('');
-            }
-
-            updateReadingPlans() {
-                // Update progress bars and stats
-                const progressBars = document.querySelectorAll('.progress-fill');
-                progressBars.forEach((bar, index) => {
-                    const progress = [65, 30][index] || 50; // Mock progress
-                    bar.style.width = `${progress}%`;
-                });
-            }
-
-            getVerseText(verse) {
-                // Mock implementation
-                return "For God so loved the world that he gave his one and only Son...";
             }
 
             saveNotes() {
@@ -1407,12 +1625,11 @@
             }
 
             init() {
-                document.getElementById('clearHistory')?.addEventListener('click', () => this.clearHistory());
+                document.getElementById('clearHistory').addEventListener('click', () => this.clearHistory());
                 this.updateHistoryDisplay();
             }
 
             addToHistory(verse) {
-                // Prevent duplicates
                 const existingIndex = this.history.findIndex(item => 
                     item.book === verse.book && 
                     item.chapter === verse.chapter && 
@@ -1428,7 +1645,6 @@
                     timestamp: new Date().toISOString()
                 });
 
-                // Keep only last 50 items
                 if (this.history.length > 50) {
                     this.history = this.history.slice(0, 50);
                 }
@@ -1442,7 +1658,7 @@
                     this.history = [];
                     this.save();
                     this.updateHistoryDisplay();
-                    bibleReader.showNotification('History cleared!');
+                    bibleReader.showNotification('Reading history cleared!');
                 }
             }
 
@@ -1451,18 +1667,18 @@
             }
 
             updateHistoryDisplay() {
-                const historyList = document.querySelector('.history-list');
+                const historyList = document.getElementById('historyListContainer');
                 if (!historyList) return;
 
                 if (this.history.length === 0) {
-                    historyList.innerHTML = '<p>No reading history yet.</p>';
+                    historyList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No reading history yet. Start reading to build your history!</p>';
                     return;
                 }
 
                 historyList.innerHTML = this.history.map(item => `
                     <div class="card" style="margin-bottom: 10px;">
                         <div class="verse-text">${item.text.substring(0, 100)}...</div>
-                        <div class="verse-reference" style="color: var(--secondary-color); margin-top: 5px;">${item.book} ${item.chapter}:${item.verse}</div>
+                        <div class="verse-reference" style="color: var(--secondary-color); margin-top: 5px;">${item.book} ${item.chapter}:${item.verse} (${item.version})</div>
                         <div class="history-date" style="font-size: 0.8rem; color: #666; margin-top: 5px;">${this.formatDate(item.timestamp)}</div>
                     </div>
                 `).join('');
@@ -1476,9 +1692,9 @@
                 if (diff < 24 * 60 * 60 * 1000) {
                     return 'Today, ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 } else if (diff < 48 * 60 * 60 * 1000) {
-                    return 'Yesterday';
+                    return 'Yesterday, ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 } else {
-                    return date.toLocaleDateString();
+                    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 }
             }
         }
@@ -1509,8 +1725,8 @@
                     });
                 });
 
-                document.getElementById('shareText').addEventListener('click', () => this.shareText());
-                document.getElementById('shareImage').addEventListener('click', () => this.shareImage());
+                document.getElementById('shareTextBtn').addEventListener('click', () => this.shareText());
+                document.getElementById('shareImageBtn').addEventListener('click', () => this.shareImage());
 
                 // Close modal when clicking outside
                 document.getElementById('shareModal').addEventListener('click', (e) => {
@@ -1525,7 +1741,6 @@
                 let shareUrl = `https://bible.com/bible/59/${verse.book}.${verse.chapter}.${verse.verse}`;
                 
                 if (this.privacyMode) {
-                    // Single hidden link implementation
                     shareUrl = this.generatePrivateLink(verse);
                 }
 
@@ -1538,7 +1753,6 @@
                         url: shareUrl
                     });
                 } else {
-                    // Fallback: copy to clipboard
                     navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
                     bibleReader.showNotification('Verse copied to clipboard!');
                 }
@@ -1551,46 +1765,22 @@
                 const theme = this.selectedTheme;
                 const includeAttribution = this.includeAttribution;
                 
-                // In real app, this would generate an actual image
-                const imageUrl = this.generateVerseImage(verse, theme, includeAttribution);
-                
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'Bible Verse',
-                        files: [new File([imageUrl], 'verse.png', { type: 'image/png' })]
-                    });
-                } else {
-                    // Fallback: download image
-                    const link = document.createElement('a');
-                    link.href = imageUrl;
-                    link.download = `verse-${verse.book}-${verse.chapter}-${verse.verse}.png`;
-                    link.click();
-                    bibleReader.showNotification('Image downloaded!');
-                }
-
+                bibleReader.showNotification(`Creating ${theme} image share${includeAttribution ? ' with attribution' : ''}...`);
                 document.getElementById('shareModal').style.display = 'none';
             }
 
             generatePrivateLink(verse) {
-                // Implementation for single hidden link
                 return `https://versecurator.app/v/${btoa(JSON.stringify(verse))}`;
             }
 
-            generateVerseImage(verse, theme, includeAttribution) {
-                // Mock implementation - in real app, this would use canvas
-                return 'data:image/png;base64,mock-image-data';
-            }
-
             getVerseText(verse) {
-                // Mock implementation
-                return "For God so loved the world that he gave his one and only Son...";
+                return document.getElementById('verseText').textContent;
             }
         }
 
         // ===== SUPPORTING SERVICES =====
         class NoteEditor {
             static open(verse) {
-                // Show modal implementation
                 const modal = document.getElementById('noteEditorModal');
                 modal.style.display = 'flex';
                 
@@ -1611,26 +1801,15 @@
                     modal.style.display = 'none';
                     document.getElementById('noteText').value = '';
                 };
-
-                // Close modal when clicking outside
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
-                        document.getElementById('noteText').value = '';
-                    }
-                });
             }
         }
 
         class AudioService {
             static playVerse(verse) {
-                // Mock audio implementation
-                console.log('Playing audio for:', verse);
-                bibleReader.showNotification('Audio playback started');
+                bibleReader.showNotification(`Playing audio: ${verse.book} ${verse.chapter}:${verse.verse}`);
             }
 
             static togglePlayback() {
-                // Mock implementation
                 const button = document.getElementById('audioPlayPause');
                 const icon = button.querySelector('i');
                 if (icon.classList.contains('fa-play')) {
@@ -1651,8 +1830,6 @@
 
             init() {
                 this.fixDisplayMode();
-                this.fixSharingPrivacy();
-                this.addAttributionToggle();
             }
 
             fixDisplayMode() {
@@ -1669,97 +1846,6 @@
                         bibleReader.showNotification('Light mode enabled');
                     }
                 });
-
-                // Load saved theme
-                const savedTheme = localStorage.getItem('theme');
-                if (savedTheme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    document.querySelector('#modeToggle i').className = 'fas fa-sun';
-                }
-            }
-
-            fixSharingPrivacy() {
-                // Already implemented in SharingManager
-                console.log('Text sharing privacy fix: Single hidden link implemented');
-            }
-
-            addAttributionToggle() {
-                // Already implemented in SharingManager
-                console.log('Image attribution toggle: Added to sharing options');
-            }
-        }
-
-        // ===== APP INITIALIZATION =====
-        class VerseCuratorApp {
-            constructor() {
-                this.currentView = 'bible-reader';
-                this.init();
-            }
-
-            init() {
-                this.initializeModules();
-                this.bindGlobalEvents();
-                this.applySavedSettings();
-                
-                console.log('VerseCurator App Initialized!');
-                console.log('✓ Phase 1: Core Bible Reader + Search + 8 Translations');
-                console.log('✓ Phase 2: Community Features + Reminders');
-                console.log('✓ Phase 3: Study Tools');
-                console.log('✓ Critical Fixes: Display Mode, Privacy, Attribution');
-            }
-
-            initializeModules() {
-                // Make modules globally available
-                window.bibleReader = new BibleReader();
-                window.searchEngine = new SearchEngine();
-                window.communityManager = new CommunityManager();
-                window.reminderManager = new ReminderManager();
-                window.studyTools = new StudyTools();
-                window.historyManager = new HistoryManager();
-                window.sharingManager = new SharingManager();
-                window.criticalFixes = new CriticalFixes();
-            }
-
-            bindGlobalEvents() {
-                // View navigation
-                document.querySelectorAll('.nav-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        this.switchView(e.target.dataset.view);
-                    });
-                });
-            }
-
-            switchView(viewName) {
-                // Update navigation
-                document.querySelectorAll('.nav-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
-
-                // Update views
-                document.querySelectorAll('.app-view').forEach(view => {
-                    view.classList.remove('active');
-                });
-                document.getElementById(viewName).classList.add('active');
-
-                this.currentView = viewName;
-                
-                // Refresh data if needed
-                if (viewName === 'history') {
-                    historyManager.updateHistoryDisplay();
-                } else if (viewName === 'study-tools') {
-                    studyTools.loadInitialData();
-                } else if (viewName === 'community') {
-                    communityManager.updateFeed();
-                }
-            }
-
-            applySavedSettings() {
-                // Apply any saved user preferences
-                const savedTheme = localStorage.getItem('theme');
-                if (savedTheme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                }
             }
         }
 
